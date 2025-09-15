@@ -28,11 +28,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle
 
-    - name: Auto-increment versionCode
       run: |
-        VERSION_CODE=$(date +%s)
-        sed -i "s/versionCode [0-9]\+/versionCode $VERSION_CODE/" app/build.gradle
-        echo "New versionCode: $VERSION_CODE"
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
