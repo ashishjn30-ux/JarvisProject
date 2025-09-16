@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+if [ -z "$JAVA_HOME" ]; then
+  java -version >/dev/null 2>&1 || {
+    echo "ERROR: Java is required to run the Gradle wrapper. Install Java or set JAVA_HOME."
+    exit 1
+  }
+fi
+here="$(cd "$(dirname "$0")" && pwd)"
+exec java -jar "$here/gradle/wrapper/gradle-wrapper.jar" "$@"
