@@ -9,17 +9,21 @@
         android:id="@+id/promptInput"
         android:hint="Ask Jarvis..."
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/sendBtn"
-        android:text="Send"
+        android:text="SEND"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" />
 
     <TextView
         android:id="@+id/responseView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"/>
+        android:padding="12dp"
+        android:text="Response will appear here..."
+        android:textSize="16sp" />
+
 </LinearLayout>
