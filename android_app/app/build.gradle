@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace "com.jarvisproject"
     compileSdkVersion 33
+
     defaultConfig {
         applicationId "com.jarvisproject"
         minSdkVersion 21
@@ -9,6 +11,7 @@ android {
         versionCode 1
         versionName "0.1"
     }
+
     buildTypes {
         release {
             minifyEnabled false
