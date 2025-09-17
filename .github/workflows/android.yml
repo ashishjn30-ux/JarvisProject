@@ -5,9 +5,6 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
-permissions:
-  contents: write   # ✅ Allow release creation
-
 env:
   ANDROID_HOME: ${{ github.workspace }}/android-sdk
   ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
@@ -59,6 +56,15 @@ jobs:
         cd android_app
         chmod +x ./gradlew
 
+    - name: Inject latest ngrok URL into MainActivity.java
+      run: |
+        if [ -f /content/drive/MyDrive/JarvisProject/public_url.txt ]; then
+          NGROK_URL=$(cat /content/drive/MyDrive/JarvisProject/public_url.txt)
+        else
+          NGROK_URL="http://127.0.0.1:5000"
+        fi
+        sed -i "s|private static final String BASE_URL = .*|private static final String BASE_URL = \\\"$NGROK_URL\\\";|" android_app/app/src/main/java/com/jarvisproject/MainActivity.java
+
     - name: Build APK (assembleDebug)
       run: |
         cd android_app
@@ -75,7 +81,6 @@ jobs:
       with:
         tag_name: v${{ github.run_number }}
         name: "JarvisProject Build #${{ github.run_number }}"
-        body: "Commit: ${{ github.event.head_commit.message }}"   # ✅ Last commit msg in release notes
         draft: false
         prerelease: false
         files: android_app/app/build/outputs/apk/debug/app-debug.apk
