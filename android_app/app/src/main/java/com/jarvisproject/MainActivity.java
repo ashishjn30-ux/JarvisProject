@@ -23,9 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
         sendBtn.setOnClickListener(v -> {
             String prompt = input.getText().toString();
-
-            // ✅ Corrected JSON construction
             String json = "{\"prompt\":\"" + prompt.replace("\"", "\\\"") + "\"}";
+
             RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"),
                 json
