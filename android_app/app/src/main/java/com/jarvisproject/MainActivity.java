@@ -4,21 +4,13 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import okhttp3.*;
 
 public class MainActivity extends AppCompatActivity {
     private OkHttpClient client = new OkHttpClient();
     private static final String BASE_URL = "https://a669c1fff7d0.ngrok-free.app"; // replace if needed
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +24,17 @@ public class MainActivity extends AppCompatActivity {
         sendBtn.setOnClickListener(v -> {
             String prompt = input.getText().toString();
 
-            // Build JSON string properly
+            // ✅ Corrected JSON construction
             String json = "{\"prompt\":\"" + prompt.replace("\"", "\\\"") + "\"}";
-
-            RequestBody body = RequestBody.create(JSON, json);
+            RequestBody body = RequestBody.create(
+                MediaType.parse("application/json"),
+                json
+            );
 
             Request request = new Request.Builder()
-                    .url(BASE_URL + "/jarvis/prompt")
-                    .post(body)
-                    .build();
+                .url(BASE_URL + "/jarvis/prompt")
+                .post(body)
+                .build();
 
             new Thread(() -> {
                 try {
