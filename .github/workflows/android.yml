@@ -5,6 +5,9 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write   # ✅ Allow release creation
+
 env:
   ANDROID_HOME: ${{ github.workspace }}/android-sdk
   ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
@@ -72,6 +75,7 @@ jobs:
       with:
         tag_name: v${{ github.run_number }}
         name: "JarvisProject Build #${{ github.run_number }}"
+        body: "Commit: ${{ github.event.head_commit.message }}"   # ✅ Last commit msg in release notes
         draft: false
         prerelease: false
         files: android_app/app/build/outputs/apk/debug/app-debug.apk
