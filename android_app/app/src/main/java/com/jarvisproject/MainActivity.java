@@ -10,7 +10,7 @@ import okhttp3.*;
 
 public class MainActivity extends AppCompatActivity {
     private OkHttpClient client = new OkHttpClient();
-    private String BASE_URL = null; // will be loaded dynamically
+    private String BASE_URL = null; // will fetch dynamically
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,24 +21,28 @@ public class MainActivity extends AppCompatActivity {
         Button sendBtn = findViewById(R.id.sendBtn);
         TextView responseView = findViewById(R.id.responseView);
 
-        // Step 1: Fetch latest BASE_URL from backend /public_url
+        // Step 1: fetch ngrok URL from backend
         new Thread(() -> {
+            Request req = new Request.Builder()
+                .url("https://raw.githubusercontent.com/ashishjn30-ux/JarvisProject/main/public_url.txt")
+                .build();
             try {
-                Request request = new Request.Builder()
-                        .url("https://a669c1fff7d0.ngrok-free.app/public_url") // fallback old link
-                        .build();
-                Response response = client.newCall(request).execute();
-                BASE_URL = response.body().string().trim();
-                runOnUiThread(() -> responseView.setText("Connected to: " + BASE_URL));
+                Response res = client.newCall(req).execute();
+                if (res.isSuccessful() && res.body() != null) {
+                    BASE_URL = res.body().string().trim();
+                    runOnUiThread(() -> responseView.setText("Connected to: " + BASE_URL));
+                } else {
+                    runOnUiThread(() -> responseView.setText("Failed to fetch backend URL"));
+                }
             } catch (IOException e) {
-                runOnUiThread(() -> responseView.setText("Error fetching backend URL"));
+                runOnUiThread(() -> responseView.setText("Error: " + e.getMessage()));
             }
         }).start();
 
-        // Step 2: Send prompt when button clicked
+        // Step 2: send prompt
         sendBtn.setOnClickListener(v -> {
             if (BASE_URL == null) {
-                responseView.setText("Backend URL not loaded yet");
+                responseView.setText("Backend not ready yet!");
                 return;
             }
 
@@ -46,20 +50,24 @@ public class MainActivity extends AppCompatActivity {
             String json = "{\"prompt\":\"" + prompt.replace("\"", "\\\"") + "\"}";
 
             RequestBody body = RequestBody.create(
-                    MediaType.parse("application/json"),
-                    json
+                MediaType.parse("application/json"),
+                json
             );
 
             Request request = new Request.Builder()
-                    .url(BASE_URL + "/jarvis/prompt")
-                    .post(body)
-                    .build();
+                .url(BASE_URL + "/jarvis/prompt")
+                .post(body)
+                .build();
 
             new Thread(() -> {
                 try {
                     Response response = client.newCall(request).execute();
-                    final String res = response.body().string();
-                    runOnUiThread(() -> responseView.setText(res));
+                    if (response.isSuccessful() && response.body() != null) {
+                        final String res = response.body().string();
+                        runOnUiThread(() -> responseView.setText(res));
+                    } else {
+                        runOnUiThread(() -> responseView.setText("Request failed"));
+                    }
                 } catch (IOException e) {
                     runOnUiThread(() -> responseView.setText("Error: " + e.getMessage()));
                 }
