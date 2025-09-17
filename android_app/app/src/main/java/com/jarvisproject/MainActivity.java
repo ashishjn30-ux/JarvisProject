@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
             String prompt = input.getText().toString();
             RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"),
-                "{"prompt":"" + prompt.replace("\"","\\\"") + ""}"
+                String json = "{\"prompt\":\""+ prompt.replace("\"","\\\"") +"\"}";
             );
 
             Request request = new Request.Builder()
