@@ -4,13 +4,14 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import java.io.IOException;
 import okhttp3.*;
 
 public class MainActivity extends AppCompatActivity {
     private OkHttpClient client = new OkHttpClient();
-    private static final String BASE_URL = "https://a669c1fff7d0.ngrok-free.app"; // replace if needed
+    private static final String BASE_URL = "https://a669c1fff7d0.ngrok-free.app"; // ⚠️ update when ngrok changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,10 @@ public class MainActivity extends AppCompatActivity {
                     final String res = response.body().string();
                     runOnUiThread(() -> responseView.setText(res));
                 } catch (IOException e) {
-                    runOnUiThread(() -> responseView.setText("Error: " + e.getMessage()));
+                    runOnUiThread(() -> {
+                        responseView.setText("Error: " + e.getMessage());
+                        Toast.makeText(this, "⚠️ Cannot reach server. Check if backend is running.", Toast.LENGTH_LONG).show();
+                    });
                 }
             }).start();
         });
